@@ -2,7 +2,7 @@ from datetime import date, timedelta
 
 from fastapi.testclient import TestClient
 
-import main
+from backend import main
 
 
 def setup_module() -> None:
