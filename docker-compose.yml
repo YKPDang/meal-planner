@@ -1,12 +1,16 @@
 services:
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     container_name: meal-planner-backend
     environment:
       - DATABASE_PATH=/data/meal_planner.db
       - SMART_RANDOM_LOOKBACK_DAYS=7
     volumes:
       - meal_planner_data:/data
+    ports:
+      - "8000:8000"
 
   frontend:
     build: ./frontend
