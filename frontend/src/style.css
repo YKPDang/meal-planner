@@ -1,0 +1,67 @@
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  color: #1f2937;
+  background: #f3f4f6;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.grid {
+  display: grid;
+  gap: 0.5rem;
+}
+
+input,
+textarea,
+button,
+select {
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.day {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.actions {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.week-header,
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.status {
+  color: #b91c1c;
+}
