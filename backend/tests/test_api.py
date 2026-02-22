@@ -23,7 +23,7 @@ def test_recipe_crud_and_tags() -> None:
     client = TestClient(main.app)
 
     create_response = client.post(
-        "/recipes",
+        "/api/recipes",
         json={
             "name": "Pasta Salad",
             "description": "Quick lunch",
@@ -39,7 +39,7 @@ def test_recipe_crud_and_tags() -> None:
     assert payload["name"] == "Pasta Salad"
     assert set(payload["tags"]) == {"pasta", "quick-lunch"}
 
-    list_response = client.get("/recipes")
+    list_response = client.get("/api/recipes")
     assert list_response.status_code == 200
     assert len(list_response.json()) == 1
 
@@ -49,7 +49,7 @@ def test_meal_plan_random_modes() -> None:
     today = date.today()
 
     second_recipe = client.post(
-        "/recipes",
+        "/api/recipes",
         json={
             "name": "Rice Bowl",
             "description": "Dinner",
@@ -60,19 +60,19 @@ def test_meal_plan_random_modes() -> None:
     assert second_recipe.status_code == 201
 
     day = today.isoformat()
-    random_response = client.post(f"/meal-plan/{day}/random", json={"mode": "random"})
+    random_response = client.post(f"/api/meal-plan/{day}/random", json={"mode": "random"})
     assert random_response.status_code == 200
     assert random_response.json()["recipe"]["id"]
 
     filtered_response = client.post(
-        f"/meal-plan/{(today + timedelta(days=1)).isoformat()}/random",
+        f"/api/meal-plan/{(today + timedelta(days=1)).isoformat()}/random",
         json={"mode": "filtered", "tags": ["pasta"]},
     )
     assert filtered_response.status_code == 200
     assert "pasta" in filtered_response.json()["recipe"]["tags"]
 
     smart_response = client.post(
-        f"/meal-plan/{(today + timedelta(days=2)).isoformat()}/random",
+        f"/api/meal-plan/{(today + timedelta(days=2)).isoformat()}/random",
         json={"mode": "smart", "lookback_days": 1},
     )
     assert smart_response.status_code == 200

@@ -7,14 +7,9 @@ export default defineConfig({
     host: true,
     port: 5173,
     proxy: {
-      '/openapi.json': {
-        target: 'http://backend:8000',
-        changeOrigin: true
-      },
       '/api': {
         target: 'http://backend:8000',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
+        changeOrigin: true
       }
     }
   }

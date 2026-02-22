@@ -5,7 +5,7 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Literal
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import APIRouter, FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -171,7 +171,12 @@ def select_random_recipe(
     return row["id"]
 
 
-app = FastAPI(title="Meal Planner API")
+app = FastAPI(
+    title="Meal Planner API",
+    docs_url="/api/docs",
+    openapi_url="/api/openapi.json",
+)
+api = APIRouter(prefix="/api")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -186,25 +191,25 @@ def on_startup() -> None:
     init_db()
 
 
-@app.get("/health")
+@api.get("/health")
 def health() -> dict:
     return {"status": "ok"}
 
 
-@app.get("/recipes")
+@api.get("/recipes")
 def list_recipes() -> list[dict]:
     with closing(get_connection()) as conn:
         rows = conn.execute("SELECT id FROM recipes ORDER BY name").fetchall()
         return [recipe_details(conn, row["id"]) for row in rows]
 
 
-@app.get("/recipes/{recipe_id}")
+@api.get("/recipes/{recipe_id}")
 def get_recipe(recipe_id: int) -> dict:
     with closing(get_connection()) as conn:
         return recipe_details(conn, recipe_id)
 
 
-@app.post("/recipes", status_code=201)
+@api.post("/recipes", status_code=201)
 def create_recipe(payload: RecipeIn) -> dict:
     with closing(get_connection()) as conn:
         cursor = conn.execute(
@@ -222,7 +227,7 @@ def create_recipe(payload: RecipeIn) -> dict:
         return recipe_details(conn, recipe_id)
 
 
-@app.put("/recipes/{recipe_id}")
+@api.put("/recipes/{recipe_id}")
 def update_recipe(recipe_id: int, payload: RecipeIn) -> dict:
     with closing(get_connection()) as conn:
         exists = conn.execute("SELECT id FROM recipes WHERE id = ?", (recipe_id,)).fetchone()
@@ -244,21 +249,21 @@ def update_recipe(recipe_id: int, payload: RecipeIn) -> dict:
         return recipe_details(conn, recipe_id)
 
 
-@app.delete("/recipes/{recipe_id}", status_code=204)
+@api.delete("/recipes/{recipe_id}", status_code=204)
 def delete_recipe(recipe_id: int) -> None:
     with closing(get_connection()) as conn:
         conn.execute("DELETE FROM recipes WHERE id = ?", (recipe_id,))
         conn.commit()
 
 
-@app.get("/tags")
+@api.get("/tags")
 def list_tags() -> list[dict]:
     with closing(get_connection()) as conn:
         rows = conn.execute("SELECT id, name FROM tags ORDER BY name").fetchall()
         return [dict(row) for row in rows]
 
 
-@app.post("/tags", status_code=201)
+@api.post("/tags", status_code=201)
 def create_tag(tag: dict) -> dict:
     name = str(tag.get("name", "")).strip()
     if not name:
@@ -270,14 +275,14 @@ def create_tag(tag: dict) -> dict:
         return dict(row)
 
 
-@app.delete("/tags/{tag_id}", status_code=204)
+@api.delete("/tags/{tag_id}", status_code=204)
 def delete_tag(tag_id: int) -> None:
     with closing(get_connection()) as conn:
         conn.execute("DELETE FROM tags WHERE id = ?", (tag_id,))
         conn.commit()
 
 
-@app.get("/meal-plan")
+@api.get("/meal-plan")
 def get_meal_plan(start_date: date = Query(default_factory=date.today), days: int = 7) -> list[dict]:
     with closing(get_connection()) as conn:
         result = []
@@ -291,7 +296,7 @@ def get_meal_plan(start_date: date = Query(default_factory=date.today), days: in
         return result
 
 
-@app.put("/meal-plan/{day}")
+@api.put("/meal-plan/{day}")
 def assign_recipe(day: date, payload: MealPlanAssign) -> dict:
     with closing(get_connection()) as conn:
         if payload.recipe_id is not None:
@@ -308,7 +313,7 @@ def assign_recipe(day: date, payload: MealPlanAssign) -> dict:
         return {"day": day.isoformat(), "recipe": recipe}
 
 
-@app.post("/meal-plan/{day}/random")
+@api.post("/meal-plan/{day}/random")
 def randomize_recipe(day: date, payload: RandomizeRequest) -> dict:
     lookback = payload.lookback_days if payload.lookback_days is not None else SMART_RANDOM_LOOKBACK_DAYS
     with closing(get_connection()) as conn:
@@ -320,3 +325,6 @@ def randomize_recipe(day: date, payload: RandomizeRequest) -> dict:
         )
         conn.commit()
         return {"day": day.isoformat(), "recipe": recipe_details(conn, recipe_id), "mode": payload.mode}
+
+
+app.include_router(api)
