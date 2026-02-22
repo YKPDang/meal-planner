@@ -1,8 +1,6 @@
 services:
   backend:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
+    build: ./backend
     container_name: meal-planner-backend
     environment:
       - DATABASE_PATH=/data/meal_planner.db
