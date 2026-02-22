@@ -13,10 +13,12 @@ from backend import main
 
 
 def setup_module() -> None:
-    main.DB_PATH = main.Path("/tmp/meal_planner_test.db")
-    if main.DB_PATH.exists():
-        main.DB_PATH.unlink()
-    main.init_db()
+    main.config.DB_PATH = main.config.Path("/tmp/meal_planner_test.db")
+    if main.config.DB_PATH.exists():
+        main.config.DB_PATH.unlink()
+    from backend.app.db import init_db
+
+    init_db()
 
 
 def test_recipe_crud_and_tags() -> None:

@@ -1,0 +1,40 @@
+:root {
+  font-family: "Poppins", "Segoe UI", system-ui, sans-serif;
+  color: #1e1e1e;
+  background-color: #f4f3ef;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(140deg, #f4f3ef 0%, #f8f6f1 45%, #f0efe9 100%);
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.subtitle {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.chip-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}

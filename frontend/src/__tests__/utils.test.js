@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatLocalDate, parseIngredientLine, parseTags } from '../utils'
+import { formatLocalDate } from '@/utils/date'
+import { parseIngredientLine, parseTags } from '@/utils/parse'
 
 describe('parseIngredientLine', () => {
   it('parses a line with a unit and item', () => {

@@ -1,6 +1,6 @@
 services:
   backend:
-    image: ghcr.io/${GHCR_OWNER:-<owner>}/meal-planner-backend:latest
+    build: ./backend
     container_name: meal-planner-backend
     environment:
       - DATABASE_PATH=/data/meal_planner.db
@@ -9,7 +9,7 @@ services:
       - meal_planner_data:/data
 
   frontend:
-    image: ghcr.io/${GHCR_OWNER:-<owner>}/meal-planner-frontend:latest
+    build: ./frontend
     container_name: meal-planner-frontend
     environment:
       - VITE_API_URL=/api

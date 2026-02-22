@@ -2,6 +2,17 @@
 
 Fullstack meal planner with Vue 3 frontend, FastAPI backend, and SQLite persistence.
 
+## How It Works
+
+1. The frontend (Vue 3 + Vuetify) loads recipes, tags, and the current week plan from the FastAPI backend.
+2. Recipes include a name, description, ingredients, and tags. Ingredients are stored as unit + item pairs.
+3. The weekly meal plan stores one recipe per day (or none). You can assign a recipe manually or use randomization.
+4. Randomization modes:
+   - `random`: any recipe.
+   - `smart`: avoids recipes used in the last N days (lookback).
+   - `filtered`: only recipes matching selected tags.
+5. The backend persists everything in SQLite; the frontend talks to `/api/*` endpoints via proxy in dev or Compose.
+
 ## Run with Docker Compose
 
 ```bash
@@ -30,6 +41,23 @@ Frontend unit tests:
 cd frontend
 npm install
 npm run test
+```
+
+## Local Development (No Docker)
+
+Backend:
+
+```bash
+cd backend
+python -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Frontend:
+
+```bash
+cd frontend
+set VITE_API_URL=http://localhost:8000/api
+npm run dev
 ```
 
 ## CI/CD
