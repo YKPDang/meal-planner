@@ -39,8 +39,8 @@ Frontend unit tests:
 
 ```bash
 cd frontend
-npm install
-npm run test
+pnpm install
+pnpm run test
 ```
 
 ## Local Development (No Docker)
@@ -57,7 +57,7 @@ Frontend:
 ```bash
 cd frontend
 set VITE_API_URL=http://localhost:8000/api
-npm run dev
+pnpm run dev
 ```
 
 ## CI/CD

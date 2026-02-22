@@ -1,13 +1,11 @@
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import { fetchJson } from '@/composables/useApi'
 import { formatLocalDate, getMonday } from '@/utils/date'
-import { parseIngredientLine, parseTags } from '@/utils/parse'
-import type { MealPlanEntry, Recipe, RecipeDraft, Tag } from '@/types/api'
+import { parseTags } from '@/utils/parse'
+import type { MealPlanEntry, RecipeDraft } from '@/types/api'
 
 export function useMealPlan() {
-  const recipes = ref<Recipe[]>([])
-  const tags = ref<Tag[]>([])
   const mealPlan = ref<MealPlanEntry[]>([])
   const status = ref('')
   const isLoading = ref(false)
@@ -29,43 +27,18 @@ export function useMealPlan() {
     return `${start.toLocaleDateString()} - ${end.toLocaleDateString()}`
   })
 
-  async function loadAll() {
+  async function loadMealPlan() {
     isLoading.value = true
     status.value = ''
     try {
-      recipes.value = await fetchJson('/recipes')
-      tags.value = await fetchJson('/tags')
       mealPlan.value = await fetchJson(
         `/meal-plan?start_date=${formatLocalDate(weekStart.value)}&days=7`
       )
     } catch (error) {
-      status.value = error instanceof Error ? error.message : 'Failed to load data'
+      status.value = error instanceof Error ? error.message : 'Failed to load meal plan'
       throw error
     } finally {
       isLoading.value = false
-    }
-  }
-
-  async function saveRecipe() {
-    const ingredients = newRecipe.value.ingredientsText
-      .split('\n')
-      .map(parseIngredientLine)
-      .filter(Boolean)
-
-    const payload = {
-      name: newRecipe.value.name,
-      description: newRecipe.value.description,
-      ingredients,
-      tags: parseTags(newRecipe.value.tagsText)
-    }
-
-    try {
-      await fetchJson('/recipes', { method: 'POST', body: JSON.stringify(payload) })
-      newRecipe.value = { name: '', description: '', ingredientsText: '', tagsText: '' }
-      status.value = 'Recipe added.'
-      await loadAll()
-    } catch (error) {
-      status.value = error instanceof Error ? error.message : 'Failed to save recipe'
     }
   }
 
@@ -75,7 +48,7 @@ export function useMealPlan() {
         method: 'PUT',
         body: JSON.stringify({ recipe_id: recipeId ? Number(recipeId) : null })
       })
-      await loadAll()
+      await loadMealPlan()
     } catch (error) {
       status.value = error instanceof Error ? error.message : 'Failed to assign recipe'
     }
@@ -88,7 +61,7 @@ export function useMealPlan() {
         method: 'POST',
         body: JSON.stringify({ mode, tags: tagsList, lookback_days: lookbackDays.value })
       })
-      await loadAll()
+      await loadMealPlan()
     } catch (error) {
       status.value = error instanceof Error ? error.message : 'Failed to randomize recipe'
     }
@@ -98,16 +71,10 @@ export function useMealPlan() {
     const next = new Date(weekStart.value)
     next.setDate(next.getDate() + delta * 7)
     weekStart.value = next
-    loadAll()
+    loadMealPlan()
   }
 
-  onMounted(async () => {
-    await loadAll()
-  })
-
   return {
-    recipes,
-    tags,
     mealPlan,
     status,
     isLoading,
@@ -116,8 +83,7 @@ export function useMealPlan() {
     newRecipe,
     weekStart,
     weekLabel,
-    loadAll,
-    saveRecipe,
+    loadMealPlan,
     assignRecipe,
     randomize,
     navigateWeek
