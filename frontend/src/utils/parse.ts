@@ -1,4 +1,4 @@
-export function parseIngredientLine(line) {
+export function parseIngredientLine(line: string) {
   const trimmed = line.trim()
   if (!trimmed) {
     return null
@@ -11,7 +11,7 @@ export function parseIngredientLine(line) {
   }
 }
 
-export function parseTags(input) {
+export function parseTags(input: string) {
   return input
     .split(',')
     .map((value) => value.trim())

@@ -7,14 +7,12 @@ services:
       - SMART_RANDOM_LOOKBACK_DAYS=7
     volumes:
       - meal_planner_data:/data
-    ports:
-      - "8000:8000"
 
   frontend:
     build: ./frontend
     container_name: meal-planner-frontend
     environment:
-      - VITE_API_URL=http://backend:8000
+      - VITE_API_URL=/api
     depends_on:
       - backend
     ports:
