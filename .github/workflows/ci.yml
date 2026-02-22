@@ -25,7 +25,7 @@ jobs:
         run: pip install -r backend/requirements.txt
 
       - name: Run backend unit tests
-        run: pytest backend/tests
+        run: PYTHONPATH="$PYTHONPATH:$(pwd)" pytest backend/tests
 
       - name: Set up Node
         uses: actions/setup-node@v4
