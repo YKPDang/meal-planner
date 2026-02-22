@@ -1,8 +1,8 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { parseIngredientLine, parseTags } from './utils'
+import { formatLocalDate, parseIngredientLine, parseTags } from './utils'
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_API_URL || '/api'
 const recipes = ref([])
 const tags = ref([])
 const mealPlan = ref([])
@@ -34,10 +34,6 @@ function getMonday(value) {
   return day
 }
 
-function toDateString(value) {
-  return new Date(value).toISOString().slice(0, 10)
-}
-
 async function fetchJson(url, options = {}) {
   const response = await fetch(`${API_BASE}${url}`, {
     headers: { 'Content-Type': 'application/json' },
@@ -54,7 +50,7 @@ async function fetchJson(url, options = {}) {
 async function loadAll() {
   recipes.value = await fetchJson('/recipes')
   tags.value = await fetchJson('/tags')
-  mealPlan.value = await fetchJson(`/meal-plan?start_date=${toDateString(weekStart.value)}&days=7`)
+  mealPlan.value = await fetchJson(`/meal-plan?start_date=${formatLocalDate(weekStart.value)}&days=7`)
 }
 
 async function saveRecipe() {

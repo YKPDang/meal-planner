@@ -5,11 +5,15 @@ Fullstack meal planner with Vue 3 frontend, FastAPI backend, and SQLite persiste
 ## Run with Docker Compose
 
 ```bash
-docker compose up --build
+export GHCR_OWNER=<owner>
+docker compose up
 ```
 
 - Frontend: http://localhost:5173
-- Backend API docs: http://localhost:8000/docs
+- Backend API docs (via frontend proxy): http://localhost:5173/api/docs
+- Docker Compose publishes only the frontend port (`5173`). The frontend proxies `/api/*` to the backend container internally.
+
+If `GHCR_OWNER` is not set, Compose defaults image names to `ghcr.io/<owner>/...`; set it to your GitHub org/user that publishes the images.
 
 ## Test
 
