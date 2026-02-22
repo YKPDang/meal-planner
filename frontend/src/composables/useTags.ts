@@ -20,6 +20,38 @@ export function useTags() {
     }
   }
 
+  async function createTag(name: string) {
+    try {
+      const newTag = await fetchJson("/tags", {
+        method: "POST",
+        body: JSON.stringify({ name })
+      });
+      status.value = "Tag created.";
+      await loadTags();
+      return newTag;
+    } catch (error) {
+      status.value =
+        error instanceof Error ? error.message : "Failed to create tag";
+      throw error;
+    }
+  }
+
+  async function updateTag(tagId: string | number, name: string) {
+    try {
+      const updated = await fetchJson(`/tags/${tagId}`, {
+        method: "PUT",
+        body: JSON.stringify({ name })
+      });
+      status.value = "Tag updated.";
+      await loadTags();
+      return updated;
+    } catch (error) {
+      status.value =
+        error instanceof Error ? error.message : "Failed to update tag";
+      throw error;
+    }
+  }
+
   async function deleteTag(tagId: string | number) {
     try {
       await fetchJson(`/tags/${tagId}`, { method: "DELETE" });
@@ -37,6 +69,8 @@ export function useTags() {
     isLoading,
     status,
     loadTags,
+    createTag,
+    updateTag,
     deleteTag
   };
 }

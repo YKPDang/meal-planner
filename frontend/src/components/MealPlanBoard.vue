@@ -23,9 +23,6 @@ const props = defineProps({
   }
 })
 
-const lookbackDays = defineModel<number>('lookbackDays', { default: 7 })
-const filterTagsInput = defineModel<string>('filterTagsInput', { default: '' })
-
 const emit = defineEmits<{
   (event: 'assign', day: string, recipeId: string): void
   (event: 'randomize', day: string, mode: 'random' | 'smart' | 'filtered'): void
@@ -46,15 +43,6 @@ const emit = defineEmits<{
           <v-btn variant="text" @click="emit('navigate', 1)">Next</v-btn>
         </div>
       </div>
-
-      <v-row dense class="mb-4">
-        <v-col cols="12" md="5">
-          <v-text-field v-model.number="lookbackDays" type="number" min="1" label="Smart lookback days" />
-        </v-col>
-        <v-col cols="12" md="7">
-          <v-text-field v-model="filterTagsInput" label="Filter tags (pasta, quick-lunch)" />
-        </v-col>
-      </v-row>
 
       <v-row dense>
         <v-col v-for="entry in props.mealPlan" :key="entry.day" cols="12" md="6" lg="4">

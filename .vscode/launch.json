@@ -33,12 +33,15 @@
       "cwd": "${workspaceFolder}/frontend"
     },
     {
-      "name": "Frontend: Chrome",
-      "type": "pwa-chrome",
+      "name": "Frontend: Firefox",
+      "type": "firefox",
       "request": "launch",
       "url": "http://localhost:5173",
       "webRoot": "${workspaceFolder}/frontend",
-      "sourceMaps": true
+      "pathMapping": {
+        "/": "${workspaceFolder}/frontend/",
+        "/src": "${workspaceFolder}/frontend/src"
+      }
     }
   ],
   "compounds": [
@@ -47,7 +50,7 @@
       "configurations": [
         "Backend: FastAPI (uvicorn)",
         "Frontend: Vite dev server",
-        "Frontend: Chrome"
+        "Frontend: Firefox"
       ]
     }
   ]

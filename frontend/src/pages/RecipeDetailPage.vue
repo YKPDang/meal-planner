@@ -63,8 +63,8 @@ const goBack = () => {
           </v-card-item>
           <v-card-text>
             <div class="chip-wrap">
-              <v-chip v-for="tag in recipe.tags" :key="tag.id" variant="tonal">
-                {{ tag.name }}
+              <v-chip v-for="tag in recipe.tags" :key="tag" variant="tonal">
+                {{ tag }}
               </v-chip>
             </div>
           </v-card-text>

@@ -25,8 +25,8 @@ const emit = defineEmits<{
 
     <v-card-text class="py-1">
       <div class="chip-wrap">
-        <v-chip v-for="tag in recipe.tags" :key="tag.id" size="small" variant="tonal">
-          {{ tag.name }}
+        <v-chip v-for="tag in recipe.tags" :key="tag" size="small" variant="tonal">
+          {{ tag }}
         </v-chip>
       </div>
     </v-card-text>

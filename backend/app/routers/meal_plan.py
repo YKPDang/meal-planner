@@ -37,7 +37,15 @@ def assign_recipe(day: date, payload: MealPlanAssign, conn=Depends(get_db)) -> d
 
 @router.post("/meal-plan/{day}/random")
 def randomize_recipe(day: date, payload: RandomizeRequest, conn=Depends(get_db)) -> dict:
+    # Get current recipe for this day (if any) to avoid selecting it
+    current_entry = conn.execute(
+        "SELECT recipe_id FROM meal_plan WHERE day = ?", (day.isoformat(),)
+    ).fetchone()
+    current_recipe_id = current_entry["recipe_id"] if current_entry else None
+
     lookback = payload.lookback_days if payload.lookback_days is not None else config.SMART_RANDOM_LOOKBACK_DAYS
-    recipe_id = meal_plan_service.select_random_recipe(conn, day, payload.mode, payload.tags, lookback)
+    recipe_id = meal_plan_service.select_random_recipe(
+        conn, day, payload.mode, payload.tags, lookback, current_recipe_id
+    )
     meal_plan_repo.upsert_meal_plan(conn, day, recipe_id)
     return {"day": day.isoformat(), "recipe": recipe_repo.recipe_details(conn, recipe_id), "mode": payload.mode}

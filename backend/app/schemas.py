@@ -3,6 +3,10 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 
+class TagIn(BaseModel):
+    name: str
+
+
 class IngredientIn(BaseModel):
     unit: str = Field(default="")
     item: str

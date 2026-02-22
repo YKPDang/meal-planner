@@ -29,8 +29,8 @@ onMounted(async () => {
       formData.value = {
         name: recipe.name,
         description: recipe.description,
-        ingredientsText: recipe.ingredients.map(i => i.name).join('\n'),
-        tagsText: recipe.tags.map(t => t.name).join(', ')
+        ingredientsText: recipe.ingredients.map(i => i.item).join('\n'),
+        tagsText: recipe.tags.join(', ')
       }
     } finally {
       isLoading.value = false

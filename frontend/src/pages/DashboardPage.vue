@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import MealPlanBoard from '@/components/MealPlanBoard.vue'
 import { useMealPlan } from '@/composables/useMealPlan'
 import { useRecipes } from '@/composables/useRecipes'
+import { useTags } from '@/composables/useTags'
 
 const mealPlanComposable = useMealPlan()
 const recipesComposable = useRecipes()
+const tagsComposable = useTags()
 
 const {
   mealPlan,
   status,
   isLoading,
   lookbackDays,
-  filterTagsInput,
   weekLabel,
   assignRecipe,
   randomize,
@@ -21,13 +22,24 @@ const {
 } = mealPlanComposable
 
 const { recipes } = recipesComposable
+const { tags } = tagsComposable
 
+const filterTags = ref<string[]>([])
 const hasStatus = computed(() => Boolean(status.value))
+
+// Convert filterTags array to comma-separated string for randomize function
+const filterTagsInput = computed(() => filterTags.value.join(', '))
+
+// Wrapper for randomize that uses the computed filterTagsInput
+const handleRandomize = (day: string, mode: 'random' | 'smart' | 'filtered') => {
+  randomize(day, mode)
+}
 
 onMounted(async () => {
   await Promise.all([
     loadMealPlan(),
-    recipesComposable.loadRecipes()
+    recipesComposable.loadRecipes(),
+    tagsComposable.loadTags()
   ])
 })
 </script>
@@ -54,9 +66,39 @@ onMounted(async () => {
           {{ status }}
         </v-alert>
 
-        <MealPlanBoard v-model:lookback-days="lookbackDays" v-model:filter-tags-input="filterTagsInput"
-          :meal-plan="mealPlan" :recipes="recipes" :week-label="weekLabel" :loading="isLoading" @assign="assignRecipe"
-          @randomize="randomize" @navigate="navigateWeek" />
+        <!-- Filter controls -->
+        <v-row dense class="mb-4">
+          <v-col cols="12" md="5">
+            <v-text-field
+              v-model.number="lookbackDays"
+              type="number"
+              min="1"
+              label="Smart lookback days"
+            />
+          </v-col>
+          <v-col cols="12" md="7">
+            <v-select
+              v-model="filterTags"
+              :items="tags"
+              item-title="name"
+              item-value="name"
+              label="Filter by tags"
+              multiple
+              chips
+              clearable
+            />
+          </v-col>
+        </v-row>
+
+        <MealPlanBoard
+          :meal-plan="mealPlan"
+          :recipes="recipes"
+          :week-label="weekLabel"
+          :loading="isLoading"
+          @assign="assignRecipe"
+          @randomize="handleRandomize"
+          @navigate="navigateWeek"
+        />
       </v-col>
     </v-row>
   </v-container>
