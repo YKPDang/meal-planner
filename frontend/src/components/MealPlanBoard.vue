@@ -31,27 +31,30 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <v-card class="mb-6">
-    <v-card-text>
-      <div class="section-title mb-4">
-        <div>
-          <h2 class="text-h6">Week Plan</h2>
-          <p class="text-body2 text-medium-emphasis mb-0">Week: {{ weekLabel }}</p>
-        </div>
-        <div class="d-flex gap-2">
-          <v-btn variant="text" @click="emit('navigate', -1)">Previous</v-btn>
-          <v-btn variant="text" @click="emit('navigate', 1)">Next</v-btn>
-        </div>
+  <div>
+    <!-- Week Navigation -->
+    <div class="d-flex align-center justify-space-between mb-5">
+      <v-btn variant="tonal" color="primary" prepend-icon="mdi-chevron-left" @click="emit('navigate', -1)">
+        Previous
+      </v-btn>
+      <div class="text-center">
+        <div class="text-h6 font-weight-bold">{{ weekLabel }}</div>
       </div>
+      <v-btn variant="tonal" color="primary" append-icon="mdi-chevron-right" @click="emit('navigate', 1)">
+        Next
+      </v-btn>
+    </div>
 
-      <v-row dense>
-        <v-col v-for="entry in props.mealPlan" :key="entry.day" cols="12" md="6" lg="4">
-          <DayCard :entry="entry" :recipes="props.recipes" @assign="(day, recipeId) => emit('assign', day, recipeId)"
-            @randomize="(day, mode) => emit('randomize', day, mode)" />
-        </v-col>
-      </v-row>
+    <!-- Day Cards Grid -->
+    <v-row>
+      <v-col v-for="entry in props.mealPlan" :key="entry.day" cols="12" sm="6" lg="4" xl="3">
+        <DayCard :entry="entry" :recipes="props.recipes" @assign="(day, recipeId) => emit('assign', day, recipeId)"
+          @randomize="(day, mode) => emit('randomize', day, mode)" />
+      </v-col>
+    </v-row>
 
-      <v-skeleton-loader v-if="props.loading" type="article" class="mt-4" />
-    </v-card-text>
-  </v-card>
+    <div v-if="props.loading" class="d-flex justify-center py-8">
+      <v-progress-circular indeterminate color="primary" size="48" />
+    </div>
+  </div>
 </template>

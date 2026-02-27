@@ -11,6 +11,7 @@ def select_random_recipe(
     tags: list[str],
     lookback_days: int,
     current_recipe_id: int | None = None,
+    exclude_tags: list[str] | None = None,
 ) -> int:
     params: list[object] = []
     clauses: list[str] = []
@@ -53,7 +54,9 @@ def select_random_recipe(
     if mode == "filtered":
         cleaned = sorted({tag.strip() for tag in tags if tag.strip()})
         if not cleaned:
-            raise HTTPException(status_code=400, detail="Filtered mode requires one or more tags")
+            raise HTTPException(
+                status_code=400, detail="Filtered mode requires one or more tags"
+            )
         placeholders = ",".join(["?" for _ in cleaned])
         clauses.append(
             "r.id IN (SELECT rt.recipe_id FROM recipe_tags rt JOIN tags t ON rt.tag_id = t.id "
@@ -61,9 +64,21 @@ def select_random_recipe(
         )
         params.extend(cleaned)
 
+    if exclude_tags:
+        cleaned_exclude = sorted({tag.strip() for tag in exclude_tags if tag.strip()})
+        if cleaned_exclude:
+            ex_placeholders = ",".join(["?" for _ in cleaned_exclude])
+            clauses.append(
+                "r.id NOT IN (SELECT rt.recipe_id FROM recipe_tags rt JOIN tags t ON rt.tag_id = t.id "
+                f"WHERE t.name IN ({ex_placeholders}))"
+            )
+            params.extend(cleaned_exclude)
+
     where_sql = f"WHERE {' AND '.join(clauses)}" if clauses else ""
     query = f"SELECT r.id FROM recipes r {where_sql} ORDER BY RANDOM() LIMIT 1"
     row = conn.execute(query, params).fetchone()
     if not row:
-        raise HTTPException(status_code=404, detail="No recipe available for selected random mode")
+        raise HTTPException(
+            status_code=404, detail="No recipe available for selected random mode"
+        )
     return row["id"]

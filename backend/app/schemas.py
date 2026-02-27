@@ -26,4 +26,5 @@ class MealPlanAssign(BaseModel):
 class RandomizeRequest(BaseModel):
     mode: Literal["random", "smart", "filtered"] = "random"
     tags: list[str] = Field(default_factory=list)
+    exclude_tags: list[str] = Field(default_factory=list)
     lookback_days: int | None = None
