@@ -13,7 +13,6 @@ services:
     container_name: meal-planner-frontend
     environment:
       - VITE_API_URL=/api
-      - VITE_ALLOWED_HOSTS=localhost,127.0.0.1,quasar.wan.walzen.org
     depends_on:
       - backend
     ports:

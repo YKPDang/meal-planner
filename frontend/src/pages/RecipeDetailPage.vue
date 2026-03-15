@@ -41,7 +41,7 @@ const goBack = () => {
       <v-col cols="12" md="8">
         <div class="mb-6">
           <h1 class="text-h4 font-weight-bold mb-2">{{ recipe.name }}</h1>
-          <p class="text-body1">{{ recipe.description }}</p>
+          <p class="text-body1" style="white-space: pre-line;">{{ recipe.description }}</p>
         </div>
 
         <v-card class="mb-6">

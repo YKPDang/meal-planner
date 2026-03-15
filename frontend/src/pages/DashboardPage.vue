@@ -18,7 +18,8 @@ const {
   assignRecipe,
   randomize,
   navigateWeek,
-  loadMealPlan
+  loadMealPlan,
+  clearWeek
 } = mealPlanComposable
 
 const { recipes } = recipesComposable
@@ -190,7 +191,7 @@ onMounted(async () => {
 
         <!-- Meal Plan Board -->
         <MealPlanBoard :meal-plan="mealPlan" :recipes="recipes" :week-label="weekLabel" :loading="isLoading"
-          @assign="assignRecipe" @randomize="handleRandomize" @navigate="navigateWeek" />
+          @assign="assignRecipe" @randomize="handleRandomize" @navigate="navigateWeek" @clear="clearWeek" />
       </v-col>
     </v-row>
   </v-container>

@@ -27,6 +27,7 @@ const emit = defineEmits<{
   (event: 'assign', day: string, recipeId: string): void
   (event: 'randomize', day: string, mode: 'random' | 'smart' | 'filtered'): void
   (event: 'navigate', delta: number): void
+  (event: 'clear'): void
 }>()
 </script>
 
@@ -42,6 +43,13 @@ const emit = defineEmits<{
       </div>
       <v-btn variant="tonal" color="primary" append-icon="mdi-chevron-right" @click="emit('navigate', 1)">
         Next
+      </v-btn>
+    </div>
+
+    <!-- Clear Week Button -->
+    <div class="d-flex justify-end mb-4">
+      <v-btn variant="tonal" color="error" size="small" prepend-icon="mdi-eraser" @click="emit('clear')">
+        Clear Week
       </v-btn>
     </div>
 

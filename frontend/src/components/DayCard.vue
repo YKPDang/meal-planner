@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import type { MealPlanEntry, Recipe } from '@/types/api'
+
+const router = useRouter()
 
 const props = defineProps<{
   entry: MealPlanEntry
@@ -53,8 +56,8 @@ const isToday = computed(() => {
 
     <v-card-text class="pa-4">
       <!-- Recipe Info -->
-      <div v-if="entry.recipe" class="mb-3">
-        <div class="text-body-1 font-weight-medium mb-1">{{ entry.recipe.name }}</div>
+      <div v-if="entry.recipe" class="mb-3 recipe-link" @click="router.push({ name: 'RecipeDetail', params: { id: entry.recipe.id } })" style="cursor: pointer;">
+        <div class="text-body-1 font-weight-medium mb-1 text-primary">{{ entry.recipe.name }}</div>
         <div v-if="entry.recipe.description" class="text-body-2 text-medium-emphasis mb-2 description-preview">
           {{ entry.recipe.description }}
         </div>
@@ -128,5 +131,9 @@ const isToday = computed(() => {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.recipe-link:hover {
+  opacity: 0.8;
 }
 </style>

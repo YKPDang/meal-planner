@@ -3,9 +3,7 @@ import vue from '@vitejs/plugin-vue'
 import vuetify from 'vite-plugin-vuetify'
 import { fileURLToPath, URL } from 'node:url'
 
-const allowedHosts = process.env.VITE_ALLOWED_HOSTS
-  ? process.env.VITE_ALLOWED_HOSTS.split(',').map(h => h.trim())
-  : ['localhost', '127.0.0.1']
+const allowedHosts = true
 
 export default defineConfig({
   plugins: [vue(), vuetify({ autoImport: true })],

@@ -77,6 +77,23 @@ export function useMealPlan() {
     }
   }
 
+  async function clearWeek() {
+    try {
+      for (const entry of mealPlan.value) {
+        if (entry.recipe) {
+          await fetchJson(`/meal-plan/${entry.day}`, {
+            method: "PUT",
+            body: JSON.stringify({ recipe_id: null })
+          });
+        }
+      }
+      await loadMealPlan();
+    } catch (error) {
+      status.value =
+        error instanceof Error ? error.message : "Failed to clear meal plan";
+    }
+  }
+
   function navigateWeek(delta: number) {
     const next = new Date(weekStart.value);
     next.setDate(next.getDate() + delta * 7);
@@ -97,6 +114,7 @@ export function useMealPlan() {
     loadMealPlan,
     assignRecipe,
     randomize,
-    navigateWeek
+    navigateWeek,
+    clearWeek
   };
 }
